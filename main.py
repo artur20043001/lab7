@@ -23,30 +23,46 @@ x = numpy.multiply(c, l)
 all_time = time.perf_counter() - t_start
 print(all_time)
 # 2
-x1 = []
-c = 0
-with open('data2.csv', "r") as csvfile:
-    table = csv.reader(csvfile, delimiter=",")
-    for row in list(table):
-        if 0 < c < 18:
-            x1.append(float(row[0]))
-        if c == 18:
-            break
-        c += 1
-x = np.arange(1, 18)
-y = np.array(x1)
+with open("data2.csv", encoding='windows-1251') as r_file:
+    incl_col = [5]
+    data1 = []
+    file_reader = csv.reader(r_file, delimiter = ",")
+    for row in file_reader:
+       col = list(row[i] for i in incl_col)
+       data1.append(col)
+    time=[]
+    PDZ = []
+    PDZnor = []
+    max = 0
+    count = 0
+    for i in range(7186):
+        if count == 0:
+            count +=1
+        else:
+            if float(data1[i][0]) > max: max = float(data1[i][0])
+            PDZ.append(float(data1[i][0]))
 
-fig, ax = plt.subplots()
+    koef = max / 100
+    for i in range(7185):
 
-ax.bar(x, y)
+        PDZnor.append(PDZ[i]/koef)
+    f_std = np.std(PDZnor)
+    print("Отклонение")
+    print(f_std)
+    fig, (axs, ax2) = plt.subplots(1, 2,
+                            figsize=(10, 7),
+                            tight_layout=True)
 
-ax.set_facecolor('seashell')
-fig.set_facecolor('floralwhite')
-fig.set_figwidth(12)  # ширина Figure
-fig.set_figheight(6)  # высота Figure
-plt.show()
-f_std = np.std(y)
-print(np.std(y))
+    axs.hist(PDZ, bins=500)
+    ax2.hist(PDZnor, bins=500)
+
+    axs.set_facecolor('seashell')
+
+    fig.set_facecolor('floralwhite')
+    fig.set_figwidth(12)  # ширина
+    fig.set_figheight(6)  # высота
+    # Show plot
+    plt.show()
 # 3
 import math
 from mpl_toolkits import mplot3d
